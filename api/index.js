@@ -55,20 +55,20 @@ function getUserDataFromToken(req){
 
 
 // test api mongodb
-app.get('',  (req,res) => {
+app.get('/api',  (req,res) => {
   // mongoose.connect(process.env.MONGODB_URI);
     res.json('test apiiiii');
 });
 
 // test api mongodb
-app.get('/test',  (req,res) => {
+app.get('/api/test',  (req,res) => {
   // mongoose.connect(process.env.MONGODB_URI);
     res.json('test ok');
 });
 
 // api register
 // pass mongodb = urDjCcssKdaQ59R0
-app.post('/register', async (req,res) => {
+app.post('/api/register', async (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   const {name,email,password} = req.body;
   try {
@@ -84,7 +84,7 @@ app.post('/register', async (req,res) => {
 });
 
 // api login
-app.post('/login', async (req,res) => {
+app.post('/api/login', async (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   const {email,password} = req.body;
   const userDoc = await User.findOne({email});
@@ -109,7 +109,7 @@ app.post('/login', async (req,res) => {
 });
 
 // api logout
-app.post('/logout', (req,res) => {
+app.post('/api/logout', (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   // hapus cookie
   res.cookie('token', '').json(true);
@@ -118,7 +118,7 @@ app.post('/logout', (req,res) => {
  
 //  check cookie apakah user udah login atau belum
 //instal cookie = npm install cookie-parser untuk ambil data , jadi ketika di refresh data yang sudah login tidak hilang
-app.get('/profile', (req,res) => {
+app.get('/api/profile', (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   // cek cookie;
   const {token} = req.cookies;  
@@ -139,7 +139,7 @@ app.get('/profile', (req,res) => {
 });
 
 // upload photo lewat link
-app.post('/upload-photo-by-link', async (req, res) => {
+app.post('/api/upload-photo-by-link', async (req, res) => {
   mongoose.connect(process.env.MONGODB_URI);
   const {link} = req.body;
   const newName = 'photo' + Date.now() + '.jpg';
@@ -155,7 +155,7 @@ app.post('/upload-photo-by-link', async (req, res) => {
 
 // upload photo lewat device
 const photosMiddleware = multer({dest:'uploads/'});
-app.post('/upload-photo', photosMiddleware.array('photos',100), async (req, res) => {
+app.post('/api/upload-photo', photosMiddleware.array('photos',100), async (req, res) => {
   mongoose.connect(process.env.MONGODB_URI);
   // console.log(req.files);
   // ambil path name dalam array agar bisa di lihat poto lewat get
@@ -175,7 +175,7 @@ app.post('/upload-photo', photosMiddleware.array('photos',100), async (req, res)
 });
 
 // addNewPlace
-app.post('/places', (req,res) => {
+app.post('/api/places', (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   const {token} = req.cookies;  
   const {title,address,addedPhoto,description,perks,extraInfo,checkIn,checkOut,maxGuests,price} = req.body;
@@ -192,7 +192,7 @@ app.post('/places', (req,res) => {
 });
 
 // ambil data places
-app.get('/user-places', (req,res) =>{
+app.get('/api/user-places', (req,res) =>{
   mongoose.connect(process.env.MONGODB_URI); 
   const {token} = req.cookies;
   jwt.verify(token, jwtSecret, {}, async (err,userData) => {
@@ -202,7 +202,7 @@ app.get('/user-places', (req,res) =>{
 })
 
 // ambil data places sesuai id
-app.get('/places/:id', async (req,res) => {
+app.get('/api/places/:id', async (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   // res.json(req.params);
   const {id} = req.params;
@@ -211,7 +211,7 @@ app.get('/places/:id', async (req,res) => {
 
 
 // updatePlace
-app.put('/places', async (req,res) => {
+app.put('/api/places', async (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   const {token} = req.cookies;  
   const {id, title,address,addedPhoto,description,perks,extraInfo,checkIn,checkOut,maxGuests,price} = req.body;
@@ -240,13 +240,13 @@ app.put('/places', async (req,res) => {
 });
 
 // ambil getplaces halaman homepage
-app.get('/places', async (req,res) => {
+app.get('/api/places', async (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   res.json( await Place.find() );
 });
 
 // booking widget
-app.post('/bookings', async (req,res) => {
+app.post('/api/bookings', async (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
 
   //ambil id owner 
@@ -268,7 +268,7 @@ app.post('/bookings', async (req,res) => {
 
 
 
-app.get('/bookings', async (req,res) => {
+app.get('/api/bookings', async (req,res) => {
   mongoose.connect(process.env.MONGODB_URI);
   const userData = await getUserDataFromToken(req);
   res.json( await Booking.find({owner:userData.id}).populate('place'))
